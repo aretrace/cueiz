@@ -11,7 +11,7 @@ import LoadingScreen from '../components/loading-screen'
 import { shuffleArray, decodeHTMLEntities, randSplice } from '../libs/helpers'
 import Question from '../components/question'
 
-// TODO: fix if opentdb is down!
+// TODO: solve if opentdb is down!
 async function getCueiz() {
   const url = `https://opentdb.com/api.php?amount=4&category=18&difficulty=easy&type=multiple`
   try {
