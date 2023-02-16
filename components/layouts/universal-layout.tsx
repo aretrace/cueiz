@@ -1,6 +1,6 @@
 import Head from 'next/head'
 
-export default function Layout({ children }) {
+export default function UniversalLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Head>

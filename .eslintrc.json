@@ -1,15 +1,26 @@
 {
-  "extends": "next/core-web-vitals",
-  "max-len": ["error", {"code": 120}],
-  "spaced-comment": ["error", "always", {
-    "line": {
-        "markers": ["/"],
-        "exceptions": ["-", "+"]
-    },
-    "block": {
-        "markers": ["!"],
-        "exceptions": ["*"],
-        "balanced": true
-    }
-}]
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
+    ],
+    "spaced-comment": [
+      "error",
+      "always",
+      {
+        "line": {
+          "markers": ["/"],
+          "exceptions": ["-", "+"]
+        },
+        "block": {
+          "markers": ["!"],
+          "exceptions": ["*"],
+          "balanced": true
+        }
+      }
+    ]
+  }
 }
