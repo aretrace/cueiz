@@ -1,5 +1,6 @@
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { InferGetServerSidePropsType } from 'next';
 import { BaseSyntheticEvent, Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { QuestionState, QuizData } from '../../common/types';
@@ -10,26 +11,30 @@ import Question from '../../components/question';
 import { decodeHTMLEntities } from '../../libs/utils';
 
 async function fetchQuiz(amount?: number) {
-  // TODO: implement options menu (use query params)
-  const url = `https://opentdb.com/api.php?amount=4&category=18&difficulty=easy&type=multiple`
+  // TODO: finish implementing options menu (use solito useParam)
+  amount = amount ?? 4
+
+  const url = `https://opentdb.com/api.php?amount=${amount}&category=18&difficulty=easy&type=multiple`
   const res = await fetch(url)
   return res.json()
 }
 
-export async function getServerSideProps(context: GetServerSideProps) {
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const amount = context.query.amount ? parseInt(context.query.amount as string) : 4
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery(['quiz'], () => fetchQuiz())
+  await queryClient.prefetchQuery(['quiz', amount], () => fetchQuiz(amount))
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
+      amount,
     },
   }
 }
 
-export default function Quiz() {
+export default function Quiz({ amount }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { isLoading, isFetching, isError, data, error, refetch, fetchStatus } = useQuery<any, Error>(
-    ['quiz'],
-    () => fetchQuiz(),
+    ['quiz', amount],
+    () => fetchQuiz(amount),
     {
       refetchOnMount: false,
       refetchOnWindowFocus: false,
