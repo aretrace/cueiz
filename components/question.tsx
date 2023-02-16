@@ -1,7 +1,7 @@
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react'
-import { useMemo } from 'react'
+import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
-import { shuffleArray } from '../libs/utils'
+import { shuffleArray } from '../libs/utils';
 
 export default function Question({
   questionId,
@@ -41,10 +41,8 @@ export default function Question({
     [fetchStatus]
   )
 
-  const shuffleArrayMemoized = useCallback(shuffleArray, [])
-
   const randomizedAnswers = useMemo(() => {
-    return shuffleArrayMemoized(answers)
+    return shuffleArray(answers)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
