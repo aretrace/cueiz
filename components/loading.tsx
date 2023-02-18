@@ -3,10 +3,10 @@ import React from 'react'
 import ContentLoader from 'react-content-loader'
 
 // TODO: Properly format component
-export default function Loading(props: Object) {
+export default function Loading({ amount }: { amount: number }) {
   return (
     <>
-      {[...Array(4)].map((_, i) => (
+      {[...Array(amount)].map((_, i) => (
         <div className="my-2">
           <ContentLoader
             speed={0.5}
@@ -15,7 +15,6 @@ export default function Loading(props: Object) {
             viewBox="0 0 800 90"
             backgroundColor="#f3f3f3"
             foregroundColor="#ecebeb"
-            {...props}
           >
             <rect x="24" y="17" rx="3" ry="3" width="560" height="28" />
             <rect x="23" y="66" rx="3" ry="3" width="71" height="25" />

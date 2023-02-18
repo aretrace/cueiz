@@ -10,3 +10,9 @@ export type QuestionState = {
   isAnswerSelected: boolean
   isAnswerCorrect: boolean
 }
+
+export type QuizQueryStringOptions = {
+  amount: number
+  category: string
+  difficulty: string
+}

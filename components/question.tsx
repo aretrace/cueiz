@@ -20,17 +20,16 @@ export default function Question({
   hasSubmitted: boolean
   fetchStatus: boolean | string
 }) {
-  const initialize = useMemo(() => {
-    return {
-      selectedAnswerValue: '',
-      resetSelectedAnswerValue() {
-        setSelectedAnswerValue(() => this.selectedAnswerValue)
-      },
-      resetAll() {
-        this.resetSelectedAnswerValue()
-      },
-    }
-  }, [])
+  const initialize = {
+    selectedAnswerValue: '',
+    resetSelectedAnswerValue() {
+      setSelectedAnswerValue(() => this.selectedAnswerValue)
+    },
+    resetAll() {
+      this.resetSelectedAnswerValue()
+    },
+  }
+
   const [selectedAnswerValue, setSelectedAnswerValue] = useState(initialize.selectedAnswerValue)
 
   useEffect(
@@ -41,10 +40,11 @@ export default function Question({
     [fetchStatus]
   )
 
-  const randomizedAnswers = useMemo(() => {
-    return shuffleArray(answers)
+  const randomizedAnswers = useMemo(
+    () => shuffleArray(answers),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    []
+  )
 
   function selectionHandler(selectionValue: string) {
     setSelectedAnswerValue(() => selectionValue)
@@ -62,7 +62,7 @@ export default function Question({
 
   return (
     <>
-      <h2 className="card-title my-1">{question}</h2>
+      <h2 className="card-title mt-1 mb-2">{question}</h2>
       <div className="card-actions">
         {randomizedAnswers.map((answer: string) => (
           <div key={answer} className={'contents'}>
