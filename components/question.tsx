@@ -20,7 +20,7 @@ export default function Question({
   hasSubmitted: boolean
   fetchStatus: boolean | string
 }) {
-  const initialize = {
+  const defaultQuestionStateValues = {
     selectedAnswerValue: '',
     resetSelectedAnswerValue() {
       setSelectedAnswerValue(() => this.selectedAnswerValue)
@@ -30,11 +30,11 @@ export default function Question({
     },
   }
 
-  const [selectedAnswerValue, setSelectedAnswerValue] = useState(initialize.selectedAnswerValue)
+  const [selectedAnswerValue, setSelectedAnswerValue] = useState(defaultQuestionStateValues.selectedAnswerValue)
 
   useEffect(
     function resetSelectedAnswer() {
-      initialize.resetAll()
+      defaultQuestionStateValues.resetAll()
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [fetchStatus]

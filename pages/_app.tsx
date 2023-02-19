@@ -6,7 +6,7 @@ import { NextPage } from 'next';
 import { AppProps } from 'next/app';
 import { useState } from 'react';
 
-import UniversalLayout from '../components/layouts/universal-layout';
+import UniversalLayout from '../layouts/universal-layout'
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: React.ReactElement) => React.ReactNode

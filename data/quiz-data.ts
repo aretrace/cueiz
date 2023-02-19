@@ -1,13 +1,12 @@
-import { ParsedUrlQuery } from 'querystring';
-
-import { QuizQueryStringOptions } from '../common/types';
+import { ParsedUrlQuery } from 'querystring'
+import { QuizQueryStringOptions } from '../common/types'
 
 export const categoryOptions = new Map([
   ['General Knowledge', 9],
   ['Entertainment: Books', 10],
   ['Entertainment: Film', 11],
   ['Entertainment: Music', 12],
-  ['Entertainment: Musicals & Theatres', 13],
+  ['Entertainment: Musicals and Theatres', 13],
   ['Entertainment: Television', 14],
   ['Entertainment: Video Games', 15],
   ['Entertainment: Board Games', 16],
@@ -60,7 +59,7 @@ export function getQueryStringOptions(query: ParsedUrlQuery) {
   return queryStringObject as QuizQueryStringOptions
 }
 
-export async function fetchQuiz({ amount, category, difficulty }: QuizQueryStringOptions) {
+export async function fetchQuizData({ amount, category, difficulty }: QuizQueryStringOptions) {
   const categoryId = categoryOptions.get(category)
   // eslint-disable-next-line max-len
   const url = `https://opentdb.com/api.php?amount=${amount}&category=${categoryId}&difficulty=${difficulty}&type=multiple`
