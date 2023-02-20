@@ -17,9 +17,7 @@ export async function getInitialProps({ query }: GetServerSidePropsContext) {
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(['quiz', queryStringOptions], () => fetchQuizData(queryStringOptions))
   return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
+    dehydratedState: dehydrate(queryClient),
   }
 }
 
