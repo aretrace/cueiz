@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useCallback, useEffect, useState } from 'react';
+import { BaseSyntheticEvent, useEffect, useState } from 'react';
 import { useMemo } from 'react';
 
 import { shuffleArray } from '../libs/utils';

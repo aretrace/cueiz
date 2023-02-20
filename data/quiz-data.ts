@@ -30,33 +30,32 @@ export const categoryOptions = new Map([
 
 export const difficultyOptions = ['easy', 'medium', 'hard']
 
-export function getQueryStringOptions(query: ParsedUrlQuery) {
-  // DEFAULTS
+export function ascertainQueryStringOptions(query: ParsedUrlQuery) {
   let queryStringObject = {
     amount: 4,
     category: 'Science: Computers',
     difficulty: 'easy',
-  }
-  const isAmountDefined = query.amount !== undefined || query.amount !== ''
+  } as QuizQueryStringOptions
+
   const areMultipleAmountsDefined = Array.isArray(query.amount)
   const isAmountNumber = typeof parseInt(query.amount as string) === 'number'
   const isAmountInRange = parseInt(query.amount as string) >= 1 && parseInt(query.amount as string) <= 5
-  if (isAmountDefined && !areMultipleAmountsDefined && isAmountNumber && isAmountInRange) {
+  if (!areMultipleAmountsDefined && isAmountNumber && isAmountInRange) {
     queryStringObject.amount = parseInt(query.amount as string)
   }
-  const isCategoryDefined = query.category !== undefined || query.category !== ''
+
   const areMultipleCategoriesDefined = Array.isArray(query.category)
   const isCategoryValid = categoryOptions.has(query.category as string)
-  if (isCategoryDefined && !areMultipleCategoriesDefined && isCategoryValid) {
+  if (!areMultipleCategoriesDefined && isCategoryValid) {
     queryStringObject.category = query.category as string
   }
-  const isDifficultyDefined = query.difficulty !== undefined || query.difficulty !== ''
+
   const areMultipleDifficultiesDefined = Array.isArray(query.difficulty)
   const isDifficultyValid = difficultyOptions.includes(query.difficulty as string)
-  if (isDifficultyDefined && !areMultipleDifficultiesDefined && isDifficultyValid) {
+  if (!areMultipleDifficultiesDefined && isDifficultyValid) {
     queryStringObject.difficulty = query.difficulty as string
   }
-  return queryStringObject as QuizQueryStringOptions
+  return queryStringObject
 }
 
 export async function fetchQuizData({ amount, category, difficulty }: QuizQueryStringOptions) {

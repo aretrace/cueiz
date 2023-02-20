@@ -4,28 +4,29 @@ import { useRouter } from 'next/router'
 import { BaseSyntheticEvent, Dispatch, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { QuestionState, QuizData, QuizQueryStringOptions } from '../common/types'
-import { fetchQuizData, getQueryStringOptions } from '../data/quiz-data'
+import { fetchQuizData, ascertainQueryStringOptions } from '../data/quiz-data'
 import { decodeHTMLEntities } from '../libs/utils'
 import Loading from './loading'
 import Question from './question'
 
 export default function AssessmentSheet({
-  queryStringOptions,
   setQueryError,
 }: {
-  queryStringOptions: QuizQueryStringOptions
   setQueryError: Dispatch<{ isError: boolean; error: Error | null }>
 }) {
+  const router = useRouter()
+  const queryStringOptions = ascertainQueryStringOptions(router.query)
   const { isLoading, isFetching, isError, data, error, refetch, fetchStatus } = useQuery<any, Error>(
     ['quiz', queryStringOptions],
     () => fetchQuizData(queryStringOptions),
     {
-      refetchOnMount: true,
+      refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
       retry: 5,
       cacheTime: 0,
       staleTime: 0,
+      // initialData: TODO: get rid of initial undefined data
       select(rawData) {
         rawData.results.forEach((item: any) => {
           item.question = decodeHTMLEntities(item.question)?.trim()
@@ -40,7 +41,7 @@ export default function AssessmentSheet({
     }
   )
 
-  const quizData = data.results.map((item: any, index: number) => {
+  const quizData = data?.results.map((item: any, index: number) => {
     const answers = [...item.incorrect_answers, item.correct_answer]
     return {
       id: index + 1,
@@ -51,7 +52,7 @@ export default function AssessmentSheet({
   }) as QuizData[]
 
   const defaultQuizStateValues = {
-    questionsStates: quizData.map(
+    questionsStates: quizData?.map(
       (questionState) =>
         ({
           id: questionState.id,
@@ -89,9 +90,9 @@ export default function AssessmentSheet({
     [fetchStatus]
   )
 
-  const allAreSelected = questionsStates.every((questionState) => questionState.isAnswerSelected)
-  const allAreCorrect = questionsStates.every((questionState) => questionState.isAnswerCorrect) // TODO: use this
-  const numberOfCorrectAnswers = questionsStates.filter((questionState) => questionState.isAnswerCorrect).length
+  const allAreSelected = questionsStates?.every((questionState) => questionState.isAnswerSelected)
+  const allAreCorrect = questionsStates?.every((questionState) => questionState.isAnswerCorrect) // TODO: use this
+  const numberOfCorrectAnswers = questionsStates?.filter((questionState) => questionState.isAnswerCorrect).length
 
   const questionsStatesHandler = useCallback(
     (selectedAnswerId: number, isAnswerSelected: boolean, isAnswerCorrect: boolean) => {
@@ -132,14 +133,13 @@ export default function AssessmentSheet({
   )
 
   function submitHandler(e: BaseSyntheticEvent) {
-    // e.preventDefault()
     if (hasSubmitted) {
       defaultQuizStateValues.resetAll()
-        refetch({ throwOnError: true })
+      refetch({ throwOnError: true })
       return
     }
     setHasSubmitted(() => true)
-    setSubmitButtonValue(() => 'New Quiz')
+    setSubmitButtonValue(() => 'Try again')
   }
 
   return (
@@ -147,7 +147,7 @@ export default function AssessmentSheet({
       {isLoading || isFetching ? (
         <Loading {...{ amount: queryStringOptions.amount }} />
       ) : (
-        quizData.map((item, index) => {
+        quizData?.map((item, index) => {
           return (
             <Fragment key={item.question}>
               <Question
@@ -161,7 +161,7 @@ export default function AssessmentSheet({
                   fetchStatus,
                 }}
               />
-              {index < quizData.length - 1 ? <div className="divider mb-0"></div> : <div className="my-2"></div>}
+              {index < quizData?.length - 1 ? <div className="divider mb-0"></div> : <div className="my-1"></div>}
             </Fragment>
           )
         })
@@ -170,7 +170,7 @@ export default function AssessmentSheet({
         {hasSubmitted && (
           <div className="flex flex-none items-center justify-center">
             <h3 className="flex-1 text-lg font-semibold">
-              {`You got ${numberOfCorrectAnswers}/${quizData.length} correct!`}
+              {`You got ${numberOfCorrectAnswers}/${quizData?.length} correct!`}
             </h3>
           </div>
         )}

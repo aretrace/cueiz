@@ -1,46 +1,56 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useRouter } from 'next/router'
 import React, { startTransition, useCallback, useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import { QuizQueryStringOptions } from '../common/types'
-import { categoryOptions, getQueryStringOptions } from '../data/quiz-data'
+import { categoryOptions, ascertainQueryStringOptions } from '../data/quiz-data'
 
-export default function OptionMenu({ queryStringOptions }: { queryStringOptions: QuizQueryStringOptions }) {
-  // export default function OptionMenu() {
+export default function OptionMenu() {
   const router = useRouter()
-  const [form, setForm] = useState<QuizQueryStringOptions>(queryStringOptions)
+  const queryStringOptions = ascertainQueryStringOptions(router.query)
+  const [options, setOptions] = useState(queryStringOptions)
+
+  useEffect(
+    function syncFormWithQueryString() {
+      if (!router.isReady) return
+      setOptions(() => queryStringOptions)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [router.isReady]
+  )
+
+  const { amount, category, difficulty } = options
+
   useEffect(
     function syncQueryStringWithForm() {
       if (!router.isReady) return
       router.replace({
         pathname: router.pathname,
-        query: { ...router.query, ...form },
+        query: { ...options },
       })
     },
-    [router.isReady, form]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [router.isReady, options]
   )
 
   function amountHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setForm((prev) => ({ ...prev, amount: parseInt(e.target.value as string) }))
+    setOptions((prev) => ({ ...prev, amount: parseInt(e.target.value as string) }))
   }
 
   function categoryHandler(e: React.ChangeEvent<HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, category: e.target.value }))
+    setOptions((prev) => ({ ...prev, category: e.target.value }))
   }
 
-  const [selectedRadioValue, setSelectedRadioValue] = useState(queryStringOptions.difficulty)
+  const [selectedRadioValue, setSelectedRadioValue] = useState(difficulty)
   function difficultyHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setSelectedRadioValue(e.target.value)
-    setForm((prev) => ({ ...prev, difficulty: e.target.value }))
+    setOptions((prev) => ({ ...prev, difficulty: e.target.value }))
   }
-
-  const { amount, category, difficulty } = queryStringOptions
 
   return (
     <>
       <form className="-mt-3 mb-3 flex items-center gap-8 overflow-x-auto">
-        <div className="flex-1 min-w-fit">
+        <div className="min-w-fit flex-1">
           <label className="label" htmlFor="amount">
             <span className="label-text text-lg">Number of questions</span>
           </label>
@@ -62,27 +72,27 @@ export default function OptionMenu({ queryStringOptions }: { queryStringOptions:
             <span>5</span>
           </div>
         </div>
-        <div className="flex-1 form-control min-w-[16ch]">
+        <div className="form-control min-w-[16ch] flex-1">
           {/* <div className="form-control min-w-0"> */}
-            <label className="label" htmlFor="category">
-              <span className="label-text text-lg">Category</span>
-            </label>
-            <select
-              className="select-bordered select"
-              value={category}
-              onChange={(e) => categoryHandler(e)}
-              name="category"
-              id="category"
-            >
-              {Array.from(categoryOptions.entries()).map((categoryOption) => {
-                const [name, id] = categoryOption
-                return (
-                  <option key={id} value={name}>
-                    {name}
-                  </option>
-                )
-              })}
-            </select>
+          <label className="label" htmlFor="category">
+            <span className="label-text text-lg">Category</span>
+          </label>
+          <select
+            className="select-bordered select"
+            value={category}
+            onChange={(e) => categoryHandler(e)}
+            name="category"
+            id="category"
+          >
+            {Array.from(categoryOptions.entries()).map((categoryOption) => {
+              const [name, id] = categoryOption
+              return (
+                <option key={id} value={name}>
+                  {name}
+                </option>
+              )
+            })}
+          </select>
           {/* </div> */}
         </div>
         <div className="basis-1/6">
@@ -96,7 +106,7 @@ export default function OptionMenu({ queryStringOptions }: { queryStringOptions:
                 value="easy"
                 onChange={(e) => difficultyHandler(e)}
                 id="easy"
-                defaultChecked={'easy' == difficulty}
+                checked={'easy' == difficulty}
               />
             </label>
             <label className="label cursor-pointer" htmlFor="medium">
@@ -108,7 +118,7 @@ export default function OptionMenu({ queryStringOptions }: { queryStringOptions:
                 value="medium"
                 onChange={(e) => difficultyHandler(e)}
                 id="medium"
-                defaultChecked={'medium' == difficulty}
+                checked={'medium' == difficulty}
               />
             </label>
             <label className="label cursor-pointer" htmlFor="hard">
@@ -120,7 +130,7 @@ export default function OptionMenu({ queryStringOptions }: { queryStringOptions:
                 value="hard"
                 onChange={(e) => difficultyHandler(e)}
                 id="hard"
-                defaultChecked={'hard' == difficulty}
+                checked={'hard' == difficulty}
               />
             </label>
           </div>

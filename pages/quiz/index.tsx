@@ -1,16 +1,19 @@
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSidePropsContext } from 'next'
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
 import { useEffect, useState } from 'react'
 import styles from 'styles/quiz-background.module.css'
 
 import Error from '../../components/error'
-import { fetchQuizData, getQueryStringOptions } from '../../data/quiz-data'
+import { fetchQuizData, ascertainQueryStringOptions } from '../../data/quiz-data'
 import AssessmentSheet from '../../components/assessment-sheet'
 import { useRouter } from 'next/router'
 import OptionMenu from '../../components/option-menu'
+import { QuizQueryStringOptions } from '../../common/types'
+import { ParsedUrlQuery } from 'querystring'
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
-  const queryStringOptions = getQueryStringOptions(query)
+// First request should be rendered on the server, subsequent requests should be rendered on the client
+export async function getInitialProps({ query }: GetServerSidePropsContext) {
+  const queryStringOptions = ascertainQueryStringOptions(query)
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(['quiz', queryStringOptions], () => fetchQuizData(queryStringOptions))
   return {
@@ -20,11 +23,7 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
   }
 }
 
-export default function Quiz() {
-  // TODO: make this into Quiz state passed down to children, ?isReady
-  const router = useRouter()
-  const queryStringOptions = getQueryStringOptions(router.query)
-
+export default function Quiz({}: InferGetServerSidePropsType<typeof getInitialProps>) {
   const [queryError, setQueryError] = useState<{ isError: boolean; error: Error | null }>({
     isError: false,
     error: null,
@@ -52,8 +51,8 @@ export default function Quiz() {
                   <Error {...{ error: queryError.error }} />
                 ) : (
                   <>
-                    <OptionMenu {...{ queryStringOptions }} />
-                    <AssessmentSheet {...{ queryStringOptions, setQueryError }} />
+                    <OptionMenu />
+                    <AssessmentSheet {...{ setQueryError }} />
                   </>
                 )}
               </main>
