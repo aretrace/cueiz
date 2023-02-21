@@ -9,6 +9,8 @@ export default function OptionMenu() {
   const queryStringOptions = ascertainQueryStringOptions(router.query)
   const { amount, category, difficulty } = queryStringOptions
 
+  // TS 5 ?
+  // <const T extends keyof QuizQueryStringOptions>
   function adjustQueryStringOptions<T extends keyof QuizQueryStringOptions>(
     queryOption: T,
     value: QuizQueryStringOptions[T]
