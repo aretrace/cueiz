@@ -30,6 +30,7 @@ export const categoryOptions = new Map([
 
 export const difficultyOptions = ['easy', 'medium', 'hard']
 
+// TODO: Make this derive from non imperative type logic
 export function ascertainQueryStringOptions(query: ParsedUrlQuery) {
   let queryStringObject = {
     amount: 4,

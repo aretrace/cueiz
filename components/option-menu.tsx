@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router'
-import React, { startTransition, useCallback, useEffect, useState } from 'react'
-import { flushSync } from 'react-dom'
+import { useState } from 'react'
 
 import { QuizQueryStringOptions } from '../common/types'
 import { categoryOptions, ascertainQueryStringOptions } from '../data/quiz-data'
@@ -8,43 +7,35 @@ import { categoryOptions, ascertainQueryStringOptions } from '../data/quiz-data'
 export default function OptionMenu() {
   const router = useRouter()
   const queryStringOptions = ascertainQueryStringOptions(router.query)
-  const [options, setOptions] = useState(queryStringOptions)
+  const { amount, category, difficulty } = queryStringOptions
 
-  useEffect(
-    function syncFormWithQueryString() {
-      if (!router.isReady) return
-      setOptions(() => queryStringOptions)
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.isReady]
-  )
-
-  const { amount, category, difficulty } = options
-
-  useEffect(
-    function syncQueryStringWithForm() {
-      if (!router.isReady) return
-      router.replace({
+  function adjustQueryStringOptions<T extends keyof QuizQueryStringOptions>(
+    queryOption: T,
+    value: QuizQueryStringOptions[T]
+  ) {
+    router.replace(
+      {
         pathname: router.pathname,
-        query: { ...options },
-      })
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router.isReady, options]
-  )
+        query: { ...queryStringOptions, [queryOption]: value },
+      },
+      undefined,
+      { shallow: true }
+    )
+  }
 
   function amountHandler(e: React.ChangeEvent<HTMLInputElement>) {
-    setOptions((prev) => ({ ...prev, amount: parseInt(e.target.value as string) }))
+    adjustQueryStringOptions('amount', parseInt(e.target.value as string))
   }
 
   function categoryHandler(e: React.ChangeEvent<HTMLSelectElement>) {
-    setOptions((prev) => ({ ...prev, category: e.target.value }))
+    adjustQueryStringOptions('category', e.target.value)
   }
 
+  // TODO: clean up logic for radio button selection
   const [selectedRadioValue, setSelectedRadioValue] = useState(difficulty)
   function difficultyHandler(e: React.ChangeEvent<HTMLInputElement>) {
     setSelectedRadioValue(e.target.value)
-    setOptions((prev) => ({ ...prev, difficulty: e.target.value }))
+    adjustQueryStringOptions('difficulty', e.target.value)
   }
 
   return (

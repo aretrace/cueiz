@@ -25,7 +25,9 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
     <>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <UniversalLayout>{getLayout(<Component {...pageProps} />)}</UniversalLayout>
+          <UniversalLayout {...pageProps}>
+            <Component {...pageProps} />
+          </UniversalLayout>
         </Hydrate>
         <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
       </QueryClientProvider>

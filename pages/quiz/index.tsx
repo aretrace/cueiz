@@ -11,23 +11,26 @@ import OptionMenu from '../../components/option-menu'
 import { QuizQueryStringOptions } from '../../common/types'
 import { ParsedUrlQuery } from 'querystring'
 
-// First request should be rendered on the server, subsequent requests should be rendered on the client
-export async function getInitialProps({ query }: GetServerSidePropsContext) {
+// First request should be rendered on the server,
+// subsequent requests should be rendered on the client
+export async function getServerSideProps({ query }: GetServerSidePropsContext) {
   const queryStringOptions = ascertainQueryStringOptions(query)
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery(['quiz', queryStringOptions], () => fetchQuizData(queryStringOptions))
   return {
-    dehydratedState: dehydrate(queryClient),
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
   }
 }
 
-export default function Quiz({}: InferGetServerSidePropsType<typeof getInitialProps>) {
+export default function Quiz({}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [queryError, setQueryError] = useState<{ isError: boolean; error: Error | null }>({
     isError: false,
     error: null,
   })
 
-  // TODO: fix rehydration error, is it something to do with randomizedAnswers?
+  // TODO: find rehydration error causes
   // https://www.joshwcomeau.com/react/the-perils-of-rehydration/
   // https://traviswimer.com/blog/easily-fix-react-hydration-errors/
   const [hasMounted, setHasMounted] = useState(false)
