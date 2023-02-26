@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 import { QuizQueryStringOptions } from '../common/types'
-import { categoryOptions, ascertainQueryStringOptions } from '../data/quiz-data'
+import { ascertainQueryStringOptions, categoryOptions } from '../data/quiz-data'
 
 export default function OptionMenu() {
   const router = useRouter()
@@ -66,7 +66,6 @@ export default function OptionMenu() {
           </div>
         </div>
         <div className="form-control min-w-[16ch] flex-1">
-          {/* <div className="form-control min-w-0"> */}
           <label className="label" htmlFor="category">
             <span className="label-text text-lg">Category</span>
           </label>
@@ -86,7 +85,6 @@ export default function OptionMenu() {
               )
             })}
           </select>
-          {/* </div> */}
         </div>
         <div className="basis-1/6">
           <div className="form-control">

@@ -32,6 +32,9 @@ export default function Question({
 
   const [selectedAnswerValue, setSelectedAnswerValue] = useState(defaultQuestionStateValues.selectedAnswerValue)
 
+  const isAnswerSelected = selectedAnswerValue ? true : false
+  const isAnswerCorrect = selectedAnswerValue == correctAnswer
+
   useEffect(
     function resetSelectedAnswer() {
       defaultQuestionStateValues.resetAll()
@@ -50,10 +53,9 @@ export default function Question({
     setSelectedAnswerValue(() => selectionValue)
   }
 
+  // TODO: how to refactor this into an event handler
   useEffect(
-    function handleSelectedAnswerQuestionsStates() {
-      const isAnswerSelected = selectedAnswerValue ? true : false
-      const isAnswerCorrect = selectedAnswerValue == correctAnswer
+    function setSelectedAnswerQuestionsStates() {
       questionsStatesHandler(questionId, isAnswerSelected, isAnswerCorrect)
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

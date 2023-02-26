@@ -1,10 +1,10 @@
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query'
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
+import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/router'
 import { BaseSyntheticEvent, Dispatch, Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import { flushSync } from 'react-dom'
-import { QuestionState, QuizData, QuizQueryStringOptions } from '../common/types'
-import { fetchQuizData, ascertainQueryStringOptions } from '../data/quiz-data'
+import ConfettiExplosion from 'react-confetti-explosion'
+
+import { QuestionState, QuizData } from '../common/types'
+import { ascertainQueryStringOptions, fetchQuizData } from '../data/quiz-data'
 import { decodeHTMLEntities } from '../libs/utils'
 import Loading from './loading'
 import Question from './question'
@@ -26,7 +26,7 @@ export default function AssessmentSheet({
       retry: 5,
       cacheTime: 0,
       staleTime: 0,
-      // initialData: TODO: get rid of initial undefined data
+      // TODO: `initialData??`, get rid of initial undefined data
       select(rawData) {
         rawData.results.forEach((item: any) => {
           item.question = decodeHTMLEntities(item.question)?.trim()
@@ -63,27 +63,21 @@ export default function AssessmentSheet({
     resetQuestionsStates() {
       setQuestionsStates(() => this.questionsStates)
     },
-    submitButtonValue: '',
-    resetSubmitButtonValue() {
-      setSubmitButtonValue(() => this.submitButtonValue)
-    },
     hasSubmitted: false,
     resetHasSubmitted() {
       setHasSubmitted(() => this.hasSubmitted)
     },
     resetAll() {
       this.resetQuestionsStates()
-      this.resetSubmitButtonValue()
       this.resetHasSubmitted()
     },
   }
 
   const [questionsStates, setQuestionsStates] = useState(defaultQuizStateValues.questionsStates)
-  const [submitButtonValue, setSubmitButtonValue] = useState(defaultQuizStateValues.submitButtonValue)
   const [hasSubmitted, setHasSubmitted] = useState(defaultQuizStateValues.hasSubmitted)
 
   useEffect(
-    function resetQuizStateValuesOnRefetch() {
+    function resetQuizStateValuesWhenOptionsChange() {
       defaultQuizStateValues.resetAll()
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,7 +85,7 @@ export default function AssessmentSheet({
   )
 
   const allAreSelected = questionsStates?.every((questionState) => questionState.isAnswerSelected)
-  const allAreCorrect = questionsStates?.every((questionState) => questionState.isAnswerCorrect) // TODO: use this
+  const allAreCorrect = questionsStates?.every((questionState) => questionState.isAnswerCorrect)
   const numberOfCorrectAnswers = questionsStates?.filter((questionState) => questionState.isAnswerCorrect).length
 
   const questionsStatesHandler = useCallback(
@@ -112,16 +106,18 @@ export default function AssessmentSheet({
     []
   )
 
-  useEffect(
-    function handleSubmitButtonValueState() {
-      if (allAreSelected) {
-        setSubmitButtonValue(() => 'Submit')
-        return
-      }
-      setSubmitButtonValue(() => 'Answer all questions')
-    },
-    [fetchStatus, allAreSelected]
-  )
+  function submitHandler(e: BaseSyntheticEvent) {
+    e.preventDefault()
+    if (hasSubmitted) {
+      defaultQuizStateValues.resetAll()
+      refetch({ throwOnError: true })
+      return
+    }
+    if (allAreSelected) {
+      setHasSubmitted(() => true)
+      return
+    }
+  }
 
   useEffect(
     function liftQueryErrorUp() {
@@ -131,16 +127,6 @@ export default function AssessmentSheet({
     },
     [isError, error, setQueryError]
   )
-
-  function submitHandler(e: BaseSyntheticEvent) {
-    if (hasSubmitted) {
-      defaultQuizStateValues.resetAll()
-      refetch({ throwOnError: true })
-      return
-    }
-    setHasSubmitted(() => true)
-    setSubmitButtonValue(() => 'Try again')
-  }
 
   return (
     <>
@@ -161,7 +147,11 @@ export default function AssessmentSheet({
                   fetchStatus,
                 }}
               />
-              {index < quizData?.length - 1 ? <div className="divider mb-0"></div> : <div className="my-1"></div>}
+              {index < quizData?.length - 1 ? (
+                <hr className="divider mb-0 border-none" />
+              ) : (
+                <hr className="my-1 border-none" />
+              )}
             </Fragment>
           )
         })
@@ -170,17 +160,18 @@ export default function AssessmentSheet({
         {hasSubmitted && (
           <div className="flex flex-none items-center justify-center">
             <h3 className="flex-1 text-lg font-semibold">
-              {`You got ${numberOfCorrectAnswers}/${quizData?.length} correct!`}
+              {`You got ${numberOfCorrectAnswers}/${quizData?.length} correct${allAreCorrect ? '!' : ''}`}
             </h3>
+            {allAreCorrect && <ConfettiExplosion />}
           </div>
         )}
         {!(isLoading || isFetching) && (
           <input
             type="button"
-            className={`btn-primary no-animation btn mt-2 flex-auto text-white`}
+            className="btn-primary no-animation btn mt-2 flex-auto text-white"
             onClick={(e) => submitHandler(e)}
             disabled={!allAreSelected}
-            value={submitButtonValue}
+            value={!allAreSelected ? 'Answer all questions' : !hasSubmitted ? 'Submit' : 'Try again'}
           />
         )}
       </div>

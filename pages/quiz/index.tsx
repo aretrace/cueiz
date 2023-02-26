@@ -1,15 +1,12 @@
-import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next'
-import { useEffect, useState } from 'react'
-import styles from 'styles/quiz-background.module.css'
+import { dehydrate, QueryClient } from '@tanstack/react-query';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { useEffect, useState } from 'react';
+import styles from 'styles/quiz-background.module.css';
 
-import Error from '../../components/error'
-import { fetchQuizData, ascertainQueryStringOptions } from '../../data/quiz-data'
-import AssessmentSheet from '../../components/assessment-sheet'
-import { useRouter } from 'next/router'
-import OptionMenu from '../../components/option-menu'
-import { QuizQueryStringOptions } from '../../common/types'
-import { ParsedUrlQuery } from 'querystring'
+import AssessmentSheet from '../../components/assessment-sheet';
+import Error from '../../components/error';
+import OptionMenu from '../../components/option-menu';
+import { ascertainQueryStringOptions, fetchQuizData } from '../../data/quiz-data';
 
 // First request should be rendered on the server,
 // subsequent requests should be rendered on the client
