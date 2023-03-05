@@ -76,6 +76,7 @@ export default function AssessmentSheet({
   const [questionsStates, setQuestionsStates] = useState(defaultQuizStateValues.questionsStates)
   const [hasSubmitted, setHasSubmitted] = useState(defaultQuizStateValues.hasSubmitted)
 
+  // TODO: https://beta.reactjs.org/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   useEffect(
     function resetQuizStateValuesWhenOptionsChange() {
       defaultQuizStateValues.resetAll()
@@ -119,6 +120,7 @@ export default function AssessmentSheet({
     }
   }
 
+  // TODO: https://beta.reactjs.org/learn/you-might-not-need-an-effect#notifying-parent-components-about-state-changes
   useEffect(
     function liftQueryErrorUp() {
       if (isError) {

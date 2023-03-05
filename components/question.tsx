@@ -35,6 +35,7 @@ export default function Question({
   const isAnswerSelected = selectedAnswerValue ? true : false
   const isAnswerCorrect = selectedAnswerValue == correctAnswer
 
+  // TODO: https://beta.reactjs.org/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
   useEffect(
     function resetSelectedAnswer() {
       defaultQuestionStateValues.resetAll()
@@ -54,6 +55,8 @@ export default function Question({
   }
 
   // TODO: how to refactor this into an event handler
+  // https://beta.reactjs.org/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+  // https://beta.reactjs.org/learn/you-might-not-need-an-effect#passing-data-to-the-parent
   useEffect(
     function setSelectedAnswerQuestionsStates() {
       questionsStatesHandler(questionId, isAnswerSelected, isAnswerCorrect)
