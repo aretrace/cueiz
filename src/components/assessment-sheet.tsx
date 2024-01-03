@@ -9,16 +9,20 @@ import { QuizData } from '@/data/quiz'
 import Confetti from 'react-dom-confetti'
 
 export default function AssessmentSheet({
-  amount: defaultAmount,
+  defaultAmount,
   isFetching,
   isOptionsMenuDisabled,
+  hasSubmittedQuiz,
   data,
-  refetch
+  refetch,
+  setHasSubmittedQuiz
 }: {
-  amount: number
+  defaultAmount: number
   isFetching: boolean
   isOptionsMenuDisabled: boolean
-  setOptionsMenuDisabled: Dispatch<SetStateAction<boolean>>
+  hasSubmittedQuiz: boolean
+  // setOptionsMenuDisabled: Dispatch<SetStateAction<boolean>>
+  setHasSubmittedQuiz: Dispatch<SetStateAction<boolean>>
   data: QuizData | undefined // github.com/TanStack/query/issues/2288
   refetch: () => void
 }) {
@@ -30,18 +34,10 @@ export default function AssessmentSheet({
   const [areAnswersCorrect, setAreAnswersCorrect] = useState<boolean[]>(
     Array(defaultAmount).fill(false)
   )
-  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false)
 
   const areAllAnswersAreSelected = selectedAnswers.every((answer) => answer !== '')
   const areAllAnswersAreCorrect = areAnswersCorrect.every((answer) => answer === true)
   const numberOfCorrectAnswers = areAnswersCorrect.filter((answer) => answer === true).length
-
-  useEffect(() => {
-    if (hasSubmitted) {
-      // Resetting the hasSubmitted state whenever form controls are changed
-      setHasSubmitted(false)
-    }
-  }, [isFetching])
 
   const questionsWithAnswers = useMemo(() => {
     // questionsWithAnswers items are memoized
@@ -57,7 +53,7 @@ export default function AssessmentSheet({
         correctAnswer
       }
     })
-  }, [rawQuestions])
+  }, [amount, rawQuestions])
 
   if (isFetching)
     return (
@@ -81,7 +77,7 @@ export default function AssessmentSheet({
             <Question
               {...{ id, question, mixedAnswers, correctAnswer }}
               {...{ selectedAnswer: selectedAnswers[id] }}
-              {...{ setSelectedAnswers, setAreAnswersCorrect, hasSubmitted }}
+              {...{ setSelectedAnswers, setAreAnswersCorrect, hasSubmittedQuiz }}
             />
             {index < questionsWithAnswers?.length - 1 ? (
               <hr className="divider mb-0 border-none" />
@@ -93,7 +89,7 @@ export default function AssessmentSheet({
       })}
       <div className="ml-16">
         <Confetti
-          active={hasSubmitted && areAllAnswersAreCorrect}
+          active={hasSubmittedQuiz && areAllAnswersAreCorrect}
           config={{
             spread: 360,
             startVelocity: 40,
@@ -107,7 +103,7 @@ export default function AssessmentSheet({
         />
       </div>
       <div className="flex gap-5 overflow-x-auto">
-        {hasSubmitted && (
+        {hasSubmittedQuiz && (
           <div className="flex flex-none items-center justify-center">
             <h3 className="mt-1 flex-1 text-lg font-semibold">
               {`You got ${numberOfCorrectAnswers}/${questionsWithAnswers?.length} correct${
@@ -122,17 +118,18 @@ export default function AssessmentSheet({
             type="button"
             className={`btn btn-primary no-animation mt-1 flex-auto text-white`}
             onClick={() => {
-              if (!hasSubmitted) {
-                setHasSubmitted(true)
+              if (!hasSubmittedQuiz) {
+                setHasSubmittedQuiz(true)
               } else {
+                setHasSubmittedQuiz(false)
                 refetch()
               }
             }}
-            disabled={!areAllAnswersAreSelected || (hasSubmitted && isOptionsMenuDisabled)}
+            disabled={!areAllAnswersAreSelected || (hasSubmittedQuiz && isOptionsMenuDisabled)}
             value={
               !areAllAnswersAreSelected
                 ? 'Answer all Questions'
-                : !hasSubmitted
+                : !hasSubmittedQuiz
                   ? 'Submit'
                   : 'Try Again'
             }

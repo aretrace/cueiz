@@ -20,14 +20,7 @@ const defaultQueryParams: AllowedQueryParams = {
 
 export default function Quiz() {
   const { getQueryParam } = useQueryParams()
-  const {
-    data,
-    isFetching,
-    isError,
-    error,
-    failureReason,
-    refetch
-  } = useQuery(
+  const { data, isFetching, isError, error, failureReason, refetch } = useQuery(
     quizFetchOptions({
       amount: parseInt(getQueryParam('amount', defaultQueryParams.amount.toString())),
       category: getQueryParam('category', defaultQueryParams.category),
@@ -35,7 +28,9 @@ export default function Quiz() {
     } as AllowedQueryParams)
   )
 
-  const [isOptionsMenuDisabled, setOptionsMenuDisabled] = useState(true)
+  const [isOptionsMenuDisabled, setOptionsMenuDisabled] = useState<boolean>(true)
+  const [hasSubmittedQuiz, setHasSubmittedQuiz] = useState<boolean>(false)
+
   useEffect(() => {
     if (isFetching) {
       setOptionsMenuDisabled(true)
@@ -48,11 +43,13 @@ export default function Quiz() {
     <>
       <OptionsMenu
         {...defaultQueryParams}
-        {...{ isFetching, isOptionsMenuDisabled, setOptionsMenuDisabled }}
+        {...{ isFetching, isOptionsMenuDisabled }}
+        {...{ setOptionsMenuDisabled, setHasSubmittedQuiz }}
       />
       <AssessmentSheet
-        amount={defaultQueryParams.amount}
-        {...{ isFetching, isOptionsMenuDisabled, setOptionsMenuDisabled, data, refetch }}
+        defaultAmount={defaultQueryParams.amount}
+        {...{ isFetching, isOptionsMenuDisabled, hasSubmittedQuiz, data, refetch }}
+        {...{ setOptionsMenuDisabled, setHasSubmittedQuiz }}
       />
     </>
   )

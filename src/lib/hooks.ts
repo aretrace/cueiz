@@ -22,7 +22,6 @@ export function useQueryParams() {
     (name: string, value: string) => {
       const params = new URLSearchParams(searchParams)
       params.set(name, value)
-
       return params.toString()
     },
     [searchParams]
@@ -33,7 +32,7 @@ export function useQueryParams() {
       const queryString = createQueryString(name, value)
       router.replace(`${pathname}?${queryString}`, { scroll: false })
     },
-    [createQueryString]
+    [createQueryString, pathname, router]
   )
 
   return { getQueryParam, setQueryParam, queryParams: searchParams, createQueryString }

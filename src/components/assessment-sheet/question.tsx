@@ -8,7 +8,7 @@ export default function Question({
   selectedAnswer,
   setSelectedAnswers,
   setAreAnswersCorrect,
-  hasSubmitted
+  hasSubmittedQuiz
 }: {
   id: number
   question: string
@@ -17,7 +17,7 @@ export default function Question({
   selectedAnswer: string
   setSelectedAnswers: Dispatch<SetStateAction<string[]>>
   setAreAnswersCorrect: Dispatch<SetStateAction<boolean[]>>
-  hasSubmitted: boolean
+  hasSubmittedQuiz: boolean
 }) {
   const hasSelectedAnswer = selectedAnswer !== ''
 
@@ -39,24 +39,24 @@ export default function Question({
   return (
     <>
       <h2 className="card-title mb-2 mt-1 select-none">{question}</h2>
-      <div className={`card-actions ${hasSubmitted ? ' pointer-events-none' : ''}`}>
+      <div className={`card-actions ${hasSubmittedQuiz ? ' pointer-events-none' : ''}`}>
         {mixedAnswers.map((answer: string) => (
           <Fragment key={answer}>
             <button
               className={`btn btn-outline btn-sm shrink text-base hover:shadow-lg
               ${selectedAnswer === answer ? ' bg-base-content text-white' : ''}
               ${
-                hasSubmitted && selectedAnswer === answer && selectedAnswer === correctAnswer
+                hasSubmittedQuiz && selectedAnswer === answer && selectedAnswer === correctAnswer
                   ? ' bg-green-500 text-blue-100'
                   : ''
               }
               ${
-                hasSubmitted && selectedAnswer === answer && selectedAnswer !== correctAnswer
+                hasSubmittedQuiz && selectedAnswer === answer && selectedAnswer !== correctAnswer
                   ? ' bg-red-500 text-blue-100'
                   : ''
               }
               ${
-                hasSubmitted && selectedAnswer !== answer && answer === correctAnswer
+                hasSubmittedQuiz && selectedAnswer !== answer && answer === correctAnswer
                   ? ' border-green-500 text-green-600'
                   : ''
               }`}

@@ -9,11 +9,13 @@ export default function OptionsMenu({
   category: defaultCategory,
   difficulty: defaultDifficulty,
   isOptionsMenuDisabled,
-  setOptionsMenuDisabled
+  setOptionsMenuDisabled,
+  setHasSubmittedQuiz
 }: AllowedQueryParams & {
   isFetching: boolean
   isOptionsMenuDisabled: boolean
   setOptionsMenuDisabled: (value: boolean) => void
+  setHasSubmittedQuiz: (value: boolean) => void
 }) {
   const { getQueryParam, setQueryParam } = useQueryParams()
   const currentDifficulty = getQueryParam('difficulty', defaultDifficulty)
@@ -35,7 +37,7 @@ export default function OptionsMenu({
     if (timeLeft === 0) {
       setOptionsMenuDisabled(false)
     }
-  }, [timeLeft])
+  }, [setOptionsMenuDisabled, timeLeft])
 
   return (
     <>
@@ -61,7 +63,10 @@ export default function OptionsMenu({
         <fieldset
           className="contents"
           disabled={isOptionsMenuDisabled}
-          onChange={() => setOptionsMenuDisabled(true)}
+          onChange={() => {
+            setOptionsMenuDisabled(true)
+            setHasSubmittedQuiz(false)
+          }}
         >
           <div className="min-w-fit flex-1">
             <label className="label" htmlFor="amount">
@@ -78,7 +83,10 @@ export default function OptionsMenu({
               id="amount"
               list="values"
             />
-            <datalist className="text-md flex w-full justify-between px-2" id="values">
+            <datalist
+              className="text-md flex justify-between px-1"
+              id="values"
+            >
               <option value="1" label="1"></option>
               <option value="2" label="2"></option>
               <option value="3" label="3"></option>
@@ -91,7 +99,7 @@ export default function OptionsMenu({
               <span className="label-text text-lg">Category</span>
             </label>
             <select
-              className="select select-bordered border-inherit"
+              className="select select-bordered"
               defaultValue={getQueryParam('category', defaultCategory)}
               onChange={(e) => setQueryParam('category', e.target.value)}
               name="category"

@@ -66,10 +66,10 @@ export function quizFetchOptions(queryParams: AllowedQueryParams) {
     // enabling refetching whenever form controls change!
     queryKey: ['questions', queryParams],
     queryFn: () => getQuestions(queryParams),
-    refetchOnMount: true,
+    refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    staleTime: 6000,
+    staleTime: Infinity,
     retry: 2,
     retryDelay: 6000,
     // placeholderData is used instead
