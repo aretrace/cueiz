@@ -2,12 +2,10 @@
   float: left;
   min-height: 100vh;
   width: 100%;
-  padding-top: 48px;
-  padding-bottom: 48px;
   background-repeat: repeat;
   background-image: radial-gradient(
-    hsla(var(--bc) / 0.2) 0.5px,
-    hsla(var(--b2) / 1) 0.5px
+    hsla(214.29, 30.061%, 31.961%, 0.2) 0.5px,
+    hsla(216.92, 100%, 97.451%, 1) 0.5px
   );
   background-size: 5px 5px;
 }

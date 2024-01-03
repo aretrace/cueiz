@@ -1,14 +1,11 @@
-/* eslint-disable react/jsx-key */
-import React from 'react'
 import ContentLoader from 'react-content-loader'
-
-// TODO: Properly format component
-export default function Loading({ amount }: { amount: number }) {
+export default function QuestionsSkeleton({ amount }: { amount: number }) {
   return (
     <>
-      {[...Array(amount)].map((_, i) => (
-        <div className="my-2">
+      {Array.from({ length: amount }, (_, i) => (
+        <div className="my-2 animate-pulse" key={i}>
           <ContentLoader
+            uniqueKey="457-55-5462"
             speed={0.5}
             width={800}
             height={90}

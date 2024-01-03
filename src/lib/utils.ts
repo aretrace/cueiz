@@ -1,7 +1,8 @@
 import { DOMParser } from '@xmldom/xmldom'
 
 export function decodeHTMLEntities(string: string) {
-  return new DOMParser().parseFromString(`<root>${string}</root>`, 'text/xml').documentElement.textContent
+  return new DOMParser().parseFromString(`<root>${string}</root>`, 'text/html').documentElement
+    .textContent
 }
 
 // Fisher–Yates-Durstenfeld shuffle, ty (ashleedawg && Laurens Holst)
