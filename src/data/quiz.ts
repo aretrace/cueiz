@@ -69,7 +69,7 @@ export function quizFetchOptions(queryParams: AllowedQueryParams) {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
-    staleTime: Infinity,
+    staleTime: 0,
     retry: 2,
     retryDelay: 6000,
     // placeholderData is used instead

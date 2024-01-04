@@ -61,8 +61,9 @@ export default function OptionsMenu({
         }`}
       >
         <fieldset
-          className="contents"
-          disabled={isOptionsMenuDisabled}
+          className={`contents ${isOptionsMenuDisabled ? ' pointer-events-none' : ''}`}
+          // BUG: it seams that Safari and Firefox bug out when using the disabled attribute
+          // disabled={isOptionsMenuDisabled}
           onChange={() => {
             setOptionsMenuDisabled(true)
             setHasSubmittedQuiz(false)
@@ -78,21 +79,21 @@ export default function OptionsMenu({
               min="1"
               max="5"
               defaultValue={getQueryParam('amount', defaultAmount.toString())}
-              onChange={(e) => setQueryParam('amount', e.target.value)}
+              onChange={(e: any) => setQueryParam('amount', e.target.value)}
               name="amount"
               id="amount"
               list="values"
             />
-            <datalist
-              className="text-md flex justify-between px-1"
-              id="values"
-            >
-              <option value="1" label="1"></option>
-              <option value="2" label="2"></option>
-              <option value="3" label="3"></option>
-              <option value="4" label="4"></option>
-              <option value="5" label="5"></option>
-            </datalist>
+            {/* BUG: datalist labels do not show up on WebKit */}
+            {/* <datalist className="text-md flex select-none justify-between px-2" id="values"> */}
+            <ol className="text-md flex select-none justify-between px-2" id="values">
+              {/* <option value="1" label="1">1</option> */}
+              <li>1</li>
+              <li>2</li>
+              <li>3</li>
+              <li>4</li>
+              <li>5</li>
+            </ol>
           </div>
           <div className="form-control min-w-[16ch] flex-1">
             <label className="label" htmlFor="category">
